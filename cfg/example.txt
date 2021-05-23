@@ -6,3 +6,5 @@ A -> abB | #
 B -> aA
 C -> ddC
 D -> ddd
+ 
+S

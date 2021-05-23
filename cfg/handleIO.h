@@ -5,12 +5,12 @@
 #include <map>
 #include <vector>
 
-typedef std::string Pattern; // æ‰–Õ
+#include "cfg.h"
 
 // Input
-void handleSetString(const std::string&, std::set<char>&);
-void handleExpression(const std::string&, std::map<char, std::vector<Pattern>>&);
+void handleSetString(const std::string&, Set&);
+void handleExpression(const std::string&, PMap&);
 
 // Output
-void printSet(const std::set<char>&);
-void printExpressions(std::map<char, std::vector<Pattern>>&);
+void printSet(const Set&);
+void printExpressions(PMap&);

@@ -4,11 +4,11 @@
 #include <cctype>
 #include <vector>
 
-typedef std::string Pattern; // æ‰–Õ
+#include "cfg.h"
 
 // Input
 
-void handleSetString(const std::string& rawStr, std::set<char>& _Set) {
+void handleSetString(const std::string& rawStr, Set& _Set) {
 	for (auto ch : rawStr) {
 		if (isalpha(ch)) {
 			_Set.insert(ch);
@@ -16,7 +16,7 @@ void handleSetString(const std::string& rawStr, std::set<char>& _Set) {
 	}
 }
 
-void handleExpression(const std::string& rawStr, std::map<char, std::vector<Pattern>>& _Map) {
+void handleExpression(const std::string& rawStr, PMap & _Map) {
 	char x = rawStr[0];
 	for (size_t i = 1;i < rawStr.length();i++) {
 		char ch = rawStr[i];
@@ -28,7 +28,7 @@ void handleExpression(const std::string& rawStr, std::map<char, std::vector<Patt
 					break;
 				}
 			}
-			_Map[x].push_back(rawStr.substr(i, j - i));
+			_Map[x].insert(rawStr.substr(i, j - i));
 			i = j;
 		}
 	}
@@ -36,9 +36,9 @@ void handleExpression(const std::string& rawStr, std::map<char, std::vector<Patt
 
 // Output
 
-void printSet(const std::set<char>& _Set) {
+void printSet(const Set& _Set) {
 	std::cout << "{";
-	for (std::set<char>::iterator it = _Set.begin();it != _Set.end();it++) {
+	for (Set::iterator it = _Set.begin();it != _Set.end();it++) {
 		if (it != _Set.begin()) {
 			std::cout << ", ";
 		}
@@ -47,10 +47,10 @@ void printSet(const std::set<char>& _Set) {
 	std::cout << "}" << std::endl;
 }
 
-void printExpressions(std::map<char, std::vector<Pattern>>& _Map) {
-	for (std::map<char, std::vector<Pattern>>::iterator it = _Map.begin();it != _Map.end();it++) {
+void printExpressions(PMap & _Map) {
+	for (PMap::iterator it = _Map.begin();it != _Map.end();it++) {
 		std::cout << it->first << " -> ";
-		for (std::vector<Pattern>::iterator jt = it->second.begin();jt != it->second.end();jt++) {
+		for (PSet::iterator jt = it->second.begin();jt != it->second.end();jt++) {
 			if (jt != it->second.begin()) {
 				std::cout << " | ";
 			}
