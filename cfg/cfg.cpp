@@ -7,6 +7,10 @@
 #include "handleIO.h"
 #include "cfg.h"
 
+inline bool isN(const char ch) {
+	return isupper(ch) || ch == '$';
+}
+
 int main(int argc, char const* argv[])
 {
 	// 输入文法G
@@ -36,6 +40,7 @@ int main(int argc, char const* argv[])
 	std::string string_S;
 	std::getline(std::cin, string_S);
 	G.S = string_S[0];
+	std::cout << std::endl;
 
 	// 消除空生成式
 	CFG G1;
@@ -117,22 +122,49 @@ int main(int argc, char const* argv[])
 		G1.S = '$';
 	}
 
-	printSet(G1.N);
-	printSet(G1.T);
+	//printSet(G1.N);
+	//printSet(G1.T);
 
-	printExpressions(G1.P);
+	//printExpressions(G1.P);
 
-	std::cout << G1.S << std::endl;
+	//std::cout << G1.S << std::endl << std::endl;
 
 	// 消除单生成式
 
+	CFG G2(G1);
+
+	bool single_exist = true;
+	while (single_exist) {
+		single_exist = false;
+		for (PMap::iterator it = G2.P.begin();it != G2.P.end();it++) {
+			std::vector<char> BSymbol;
+			char A = it->first;
+			PSet& B = it->second;
+			for (PSet::iterator jt = B.begin();jt != B.end();jt++) {
+				Pattern pattern = *jt;
+				if (pattern.size() == 1 && isN(pattern[0])) {
+					BSymbol.push_back(pattern[0]);
+				}
+			}
+			if (!BSymbol.empty()) {
+				single_exist = true;
+				for (auto symbol : BSymbol) {
+					B.erase(Pattern(1,symbol));
+					B.insert(G2.P[symbol].begin(), G2.P[symbol].end());
+				}
+			}
+		}
+	}
+	printSet(G2.N);
+	printSet(G2.T);
+
+	printExpressions(G2.P);
+
+	std::cout << G2.S << std::endl;
+
 	// 消除无用符号
 
-	//printSet(G.N);
-	//printSet(G.T);
 
-	//printExpressions(G.P);
 
-	//std::cout << G.S << std::endl;
 	return 0;
 }
