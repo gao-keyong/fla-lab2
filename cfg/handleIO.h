@@ -13,3 +13,4 @@ void handleExpression(const std::string&, std::map<char, std::vector<Pattern>>&)
 
 // Output
 void printSet(const std::set<char>&);
+void printExpressions(std::map<char, std::vector<Pattern>>&);

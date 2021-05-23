@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="handleIO.h" />
+    <ClInclude Include="cfg.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="example.txt" />

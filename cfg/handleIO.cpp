@@ -46,3 +46,16 @@ void printSet(const std::set<char>& _Set) {
 	}
 	std::cout << "}" << std::endl;
 }
+
+void printExpressions(std::map<char, std::vector<Pattern>>& _Map) {
+	for (std::map<char, std::vector<Pattern>>::iterator it = _Map.begin();it != _Map.end();it++) {
+		std::cout << it->first << " -> ";
+		for (std::vector<Pattern>::iterator jt = it->second.begin();jt != it->second.end();jt++) {
+			if (jt != it->second.begin()) {
+				std::cout << " | ";
+			}
+			std::cout << *jt;
+		}
+		std::cout << std::endl;
+	}
+}

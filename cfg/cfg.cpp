@@ -3,59 +3,44 @@
 #include <string>
 #include <set>
 #include <map>
+
 #include "handleIO.h"
-
-typedef std::string Pattern; // 句型
-
-std::set<char> N;                       // 非终结符
-std::set<char> T;                       // 终结符
-std::map<char, std::vector<Pattern>> P; // 生成式的集合
-char S;
+#include "cfg.h"
 
 int main(int argc, char const* argv[])
 {
+	CFG G;
 	std::cout << "G = (N, T, P, S)" << std::endl;
 
 	std::cout << "N = {";
 	std::string string_N;
 	std::getline(std::cin, string_N);
-	handleSetString(string_N, N);
+	handleSetString(string_N, G.N);
 
 	std::cout << "T = {";
 	std::string string_T;
 	std::getline(std::cin, string_T);
-	handleSetString(string_T, T);
+	handleSetString(string_T, G.T);
 
 	std::cout << "P: (space to end)" << std::endl;
 	std::string string_P;
 	std::getline(std::cin, string_P);
 	while (string_P[0] != ' ')
 	{
-		handleExpression(string_P, P);
+		handleExpression(string_P, G.P);
 		std::getline(std::cin, string_P);
 	}
 
 	std::cout << "S: ";
 	std::string string_S;
 	std::getline(std::cin, string_S);
-	S = string_S[0];
+	G.S = string_S[0];
 
+	printSet(G.N);
+	printSet(G.T);
 
+	printExpressions(G.P);
 
-	printSet(N);
-	printSet(T);
-
-	for (std::map<char, std::vector<Pattern>>::iterator it = P.begin();it != P.end();it++) {
-		std::cout << it->first << " -> ";
-		for (std::vector<Pattern>::iterator jt = it->second.begin();jt != it->second.end();jt++) {
-			if (jt != it->second.begin()) {
-				std::cout << " | ";
-			}
-			std::cout << *jt;
-		}
-		std::cout << std::endl;
-	}
-
-	std::cout << S << std::endl;
+	std::cout << G.S << std::endl;
 	return 0;
 }
