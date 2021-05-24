@@ -13,4 +13,5 @@ void handleExpression(const std::string&, PMap&);
 
 // Output
 void printSet(const Set&);
-void printExpressions(PMap&);
+void printExpressions(const PMap&);
+void printCFG(const CFG&);

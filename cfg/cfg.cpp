@@ -3,12 +3,17 @@
 #include <string>
 #include <set>
 #include <map>
+#include <queue>
 
 #include "handleIO.h"
 #include "cfg.h"
 
 inline bool isN(const char ch) {
 	return isupper(ch) || ch == '$';
+}
+
+inline bool isT(const char ch) {
+	return islower(ch) || ch == '#';
 }
 
 int main(int argc, char const* argv[])
@@ -121,13 +126,10 @@ int main(int argc, char const* argv[])
 		G1.N.insert('$');
 		G1.S = '$';
 	}
-
-	//printSet(G1.N);
-	//printSet(G1.T);
-
-	//printExpressions(G1.P);
-
-	//std::cout << G1.S << std::endl << std::endl;
+	else
+	{
+		G1.S = G.S;
+	}
 
 	// 消除单生成式
 
@@ -155,16 +157,113 @@ int main(int argc, char const* argv[])
 			}
 		}
 	}
-	printSet(G2.N);
-	printSet(G2.T);
-
-	printExpressions(G2.P);
-
-	std::cout << G2.S << std::endl;
 
 	// 消除无用符号
 
+	CFG G3(G2);
+	Set N0;
+	bool changed = true;
+	while(changed){
+		changed = false;
+		for (PMap::iterator it = G3.P.begin();it != G3.P.end();it++) {
+			char A = it->first;
+			PSet& B = it->second;
+			for (auto pattern : B) {
+				bool generable = true;
+				for (auto ch : pattern) {
+					if (isN(ch) && N0.find(ch) == N0.end()) {
+						generable = false;
+						break;
+					}
+				}
+				if (generable) {
+					if (N0.find(A) == N0.end()) {
+						N0.insert(A);
+						changed = true;
+					}
+				}
+			}
+		}
+	}
+	
+	// 目前N0中存的是生成符号，应从G3中删去非生成符号
+	Set noGenerable;
+	for (auto symbol : G3.N) {
+		if (N0.find(symbol) == N0.end()) {
+			noGenerable.insert(symbol);
+		}
+	}
+	for (auto symbol : noGenerable) {
+		G3.N.erase(symbol);
+		G3.P.erase(symbol);
+	}
+	for (auto &pMap : G3.P) {
+		PSet patternToBeDeleted;
+		for (auto pattern : pMap.second) {
+			for (auto ch : pattern) {
+				if (isN(ch)) {
+					if (noGenerable.find(ch) != noGenerable.end()) {
+						patternToBeDeleted.insert(pattern);
+						break;
+					}
+				}
+			}
+		}
+		for (auto pattern : patternToBeDeleted) {
+			pMap.second.erase(pattern);
+		}
+	}
 
+	// 删除不可达符号
+
+	Set reachable;
+	std::queue<char> que;
+	reachable.insert(G3.S);
+	que.push(G3.S);
+	while (!que.empty())
+	{
+		char symbol = que.front();que.pop();
+		for (auto pattern : G3.P[symbol]) {
+			for (auto ch : pattern) {
+				if (isN(ch)) {
+					if (reachable.find(ch) == reachable.end()) {
+						reachable.insert(ch);
+						que.push(ch);
+					}
+				}
+			}
+		}
+	}
+
+	Set noReachable;
+	for (auto symbol : G3.N) {
+		if (reachable.find(symbol) == reachable.end()) {
+			noReachable.insert(symbol);
+		}
+	}
+	for (auto symbol : noReachable) {
+		G3.N.erase(symbol);
+		G3.P.erase(symbol);
+	}
+	for (auto& pMap : G3.P) {
+		PSet patternToBeDeleted;
+		for (auto pattern : pMap.second) {
+			for (auto ch : pattern) {
+				if (isN(ch)) {
+					if (noReachable.find(ch) != noReachable.end()) {
+						patternToBeDeleted.insert(pattern);
+						break;
+					}
+				}
+			}
+		}
+		for (auto pattern : patternToBeDeleted) {
+			pMap.second.erase(pattern);
+		}
+	}
+
+	std::cout << "G3 = (N, T, P, S)" << std::endl;
+	printCFG(G3);
 
 	return 0;
 }

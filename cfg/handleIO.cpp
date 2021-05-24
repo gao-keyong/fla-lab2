@@ -47,15 +47,27 @@ void printSet(const Set& _Set) {
 	std::cout << "}" << std::endl;
 }
 
-void printExpressions(PMap & _Map) {
-	for (PMap::iterator it = _Map.begin();it != _Map.end();it++) {
-		std::cout << it->first << " -> ";
-		for (PSet::iterator jt = it->second.begin();jt != it->second.end();jt++) {
-			if (jt != it->second.begin()) {
+void printExpressions(const PMap & _Map) {
+	for (auto pMap:_Map) {
+		std::cout << pMap.first << " -> ";
+		for (PSet::iterator it = pMap.second.begin();it != pMap.second.end();it++) {
+			if (it != pMap.second.begin()) {
 				std::cout << " | ";
 			}
-			std::cout << *jt;
+			std::cout << *it;
 		}
 		std::cout << std::endl;
 	}
+}
+
+void printCFG(const CFG& cfg) {
+	std::cout << "N = ";
+	printSet(cfg.N);
+
+	std::cout << "T = ";
+	printSet(cfg.T);
+
+	std::cout << "P:" << std::endl;
+	printExpressions(cfg.P);
+	std::cout <<"S: "<< cfg.S << std::endl;
 }

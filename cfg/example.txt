@@ -1,4 +1,4 @@
-S, A, B, C, D}
+S, A, B, C, D, E}
 a, b, c, d}
 
 S -> a | bA | B | ccD
@@ -6,5 +6,6 @@ A -> abB | #
 B -> aA
 C -> ddC
 D -> ddd
+E -> a
  
 S
